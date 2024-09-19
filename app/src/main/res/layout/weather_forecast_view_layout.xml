@@ -13,9 +13,9 @@
         android:layout_height="wrap_content"
         android:text="@string/temperature_celsius"
         android:textSize="44sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/textViewWeather"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="15°C" />
 
@@ -25,8 +25,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="24sp"
-        app:layout_constraintStart_toEndOf="@id/textViewTemperature"
         app:layout_constraintEnd_toStartOf="@id/barrier"
+        app:layout_constraintStart_toEndOf="@id/textViewTemperature"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Clear" />
 
@@ -45,8 +45,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="24sp"
-        app:layout_constraintEnd_toStartOf="@id/barrier"
         app:layout_constraintBottom_toBottomOf="@id/imageViewLocation"
+        app:layout_constraintEnd_toStartOf="@id/barrier"
         app:layout_constraintStart_toEndOf="@id/imageViewLocation"
         app:layout_constraintTop_toTopOf="@id/imageViewLocation"
         tools:text="Lviv" />
@@ -60,8 +60,8 @@
 
     <ImageView
         android:id="@+id/imageViewWeather"
-        android:layout_width="54dp"
-        android:layout_height="54dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:contentDescription="@string/weather_forecast"
         android:src="@drawable/weather_day_clear"

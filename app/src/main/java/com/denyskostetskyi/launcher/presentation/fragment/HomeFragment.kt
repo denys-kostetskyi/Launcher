@@ -7,7 +7,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.denyskostetskyi.launcher.databinding.FragmentHomeBinding
 import com.denyskostetskyi.launcher.domain.model.SystemInfo
+import com.denyskostetskyi.launcher.domain.model.Weather
+import com.denyskostetskyi.launcher.domain.model.WeatherForecast
 import com.denyskostetskyi.launcher.presentation.state.SystemInfoMapper
+import com.denyskostetskyi.launcher.presentation.state.WeatherForecastMapper
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
@@ -31,5 +34,11 @@ class HomeFragment : Fragment() {
             totalStorage = 236.5
         ))
         binding.systemInfoView.updateState(systemInfoState)
+        val weatherForecastState = WeatherForecastMapper().mapToState(WeatherForecast(
+            temperature = 15,
+            weather = Weather.CLEAR,
+            location = "Lviv"
+        ))
+        binding.weatherView.updateState(weatherForecastState)
     }
 }

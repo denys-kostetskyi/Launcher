@@ -15,6 +15,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <com.denyskostetskyi.launcher.presentation.view.WeatherForecastView
+        android:id="@+id/weatherView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/clockView" />
+
     <com.denyskostetskyi.launcher.presentation.view.SystemInfoView
         android:id="@+id/systemInfoView"
         android:layout_width="wrap_content"
@@ -22,6 +31,7 @@
         android:layout_margin="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/clockView" />
+        app:layout_constraintTop_toBottomOf="@id/weatherView" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -17,4 +17,9 @@
         <item name="android:textColor">@color/white</item>
         <item name="android:textStyle">bold</item>
     </style>
+
+    <style name="weather_text">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>

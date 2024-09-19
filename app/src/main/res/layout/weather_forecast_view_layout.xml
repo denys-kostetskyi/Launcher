@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/view_background_rect">
+
+    <TextView
+        android:id="@+id/textViewTemperature"
+        style="@style/weather_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/temperature_celsius"
+        android:textSize="44sp"
+        app:layout_constraintEnd_toStartOf="@id/textViewWeather"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="15°C" />
+
+    <TextView
+        android:id="@+id/textViewWeather"
+        style="@style/weather_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        app:layout_constraintStart_toEndOf="@id/textViewTemperature"
+        app:layout_constraintEnd_toStartOf="@id/barrier"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Clear" />
+
+    <ImageView
+        android:id="@+id/imageViewLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/your_location"
+        android:src="@drawable/ic_location"
+        app:layout_constraintStart_toStartOf="@id/textViewWeather"
+        app:layout_constraintTop_toBottomOf="@id/textViewWeather" />
+
+    <TextView
+        android:id="@+id/textViewLocation"
+        style="@style/weather_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toStartOf="@id/barrier"
+        app:layout_constraintBottom_toBottomOf="@id/imageViewLocation"
+        app:layout_constraintStart_toEndOf="@id/imageViewLocation"
+        app:layout_constraintTop_toTopOf="@id/imageViewLocation"
+        tools:text="Lviv" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="end"
+        app:constraint_referenced_ids="textViewWeather,textViewLocation" />
+
+    <ImageView
+        android:id="@+id/imageViewWeather"
+        android:layout_width="54dp"
+        android:layout_height="54dp"
+        android:layout_marginStart="16dp"
+        android:contentDescription="@string/weather_forecast"
+        android:src="@drawable/weather_day_clear"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/barrier"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

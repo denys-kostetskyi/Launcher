@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:background="@drawable/view_background_rect">
+
+    <TextView
+        android:id="@+id/textViewSystemInfo"
+        style="@style/system_info_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/system_info"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewBatteryLevel"
+        style="@style/system_info_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/battery_level"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewSystemInfo"
+        tools:text="Battery level: 90%" />
+
+    <ImageView
+        android:id="@+id/imageViewBatteryLevel"
+        style="@style/system_info_text"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:contentDescription="@string/battery_level_indicator"
+        android:src="@drawable/ic_battery_high"
+        app:layout_constraintBottom_toBottomOf="@id/textViewBatteryLevel"
+        app:layout_constraintStart_toEndOf="@id/textViewBatteryLevel"
+        app:layout_constraintTop_toTopOf="@id/textViewBatteryLevel"
+        tools:src="@drawable/ic_battery_high" />
+
+    <TextView
+        android:id="@+id/textViewAvailableMemory"
+        style="@style/system_info_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/available_memory"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/imageViewBatteryLevel"
+        tools:text="Available memory: 6.5 GB" />
+
+    <TextView
+        android:id="@+id/textViewTotalMemory"
+        style="@style/system_info_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/total_memory"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewAvailableMemory"
+        tools:text="Total memory: 16.0 GB" />
+
+    <TextView
+        android:id="@+id/textViewAvailableStorage"
+        style="@style/system_info_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/available_storage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewTotalMemory"
+        tools:text="Available storage: 100.5 GB" />
+
+    <TextView
+        android:id="@+id/textViewTotalStorage"
+        style="@style/system_info_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/total_storage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewAvailableStorage"
+        tools:text="Total storage: 236.5 GB" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

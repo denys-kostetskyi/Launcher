@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Launcher</string>
+    <string name="system_info">System Info:</string>
+    <string name="battery_level">Battery level: %1$d%%</string>
+    <string name="battery_level_indicator">Battery level indicator</string>
+    <string name="available_memory">Available memory: %1$s GB</string>
+    <string name="total_memory">Total memory: %1$s GB</string>
+    <string name="available_storage">Available storage: %1$s GB</string>
+    <string name="total_storage">Total storage: %1$s GB</string>
 </resources>

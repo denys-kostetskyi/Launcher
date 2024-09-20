@@ -28,19 +28,23 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val systemInfoState = SystemInfoMapper().mapToState(SystemInfo(
-            batteryLevel = 90,
-            availableMemory = 6.5,
-            totalMemory = 16.0,
-            availableStorage = 100.5,
-            totalStorage = 236.5
-        ))
+        val systemInfoState = SystemInfoMapper().mapToState(
+            SystemInfo(
+                batteryLevel = 90,
+                availableMemory = 6.5,
+                totalMemory = 16.0,
+                availableStorage = 100.5,
+                totalStorage = 236.5
+            )
+        )
         binding.systemInfoView.updateState(systemInfoState)
-        val weatherForecastState = WeatherForecastMapper().mapToState(WeatherForecast(
-            temperature = 15,
-            weather = Weather.CLEAR,
-            location = "Lviv"
-        ))
+        val weatherForecastState = WeatherForecastMapper().mapToState(
+            WeatherForecast(
+                temperature = 15,
+                weather = Weather.CLEAR,
+                location = "Lviv"
+            )
+        )
         binding.weatherView.updateState(weatherForecastState)
         initViews()
     }
@@ -59,7 +63,11 @@ class HomeFragment : Fragment() {
     }
 
     private fun launchAppListFragment() {
-
+        val appListFragment = AppListFragment.newInstance()
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.container, appListFragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     override fun onDestroyView() {

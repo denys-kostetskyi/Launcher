@@ -65,6 +65,12 @@ class HomeFragment : Fragment() {
     private fun launchAppListFragment() {
         val appListFragment = AppListFragment.newInstance()
         parentFragmentManager.beginTransaction()
+            .setCustomAnimations(
+                R.anim.bottom_in,
+                R.anim.top_out,
+                R.anim.top_in,
+                R.anim.bottom_out,
+            )
             .replace(R.id.container, appListFragment)
             .addToBackStack(null)
             .commit()

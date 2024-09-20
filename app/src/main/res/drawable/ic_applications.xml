@@ -3,6 +3,6 @@
 
     <item android:drawable="@drawable/view_background_circle" />
 
-    <item android:drawable="@drawable/ic_close_foreground" />
+    <item android:drawable="@drawable/ic_applications_foreground" />
 
 </layer-list>

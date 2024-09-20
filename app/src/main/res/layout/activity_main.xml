@@ -9,7 +9,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/container"
-        android:name="com.denyskostetskyi.launcher.presentation.fragment.AppListFragment"
+        android:name="com.denyskostetskyi.launcher.presentation.fragment.HomeFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".presentation.activity.MainActivity" />

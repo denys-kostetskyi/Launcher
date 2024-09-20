@@ -32,9 +32,7 @@ class AppListFragment : Fragment() {
 
     private fun initViews() {
         initRecyclerView()
-        binding.buttonCloseAppList.setOnClickListener {
-            closeAppListFragment()
-        }
+        initCloseButton()
     }
 
     private fun initRecyclerView() {
@@ -66,8 +64,17 @@ class AppListFragment : Fragment() {
         Log.d(TAG, "Launching ${appItem.packageName}")
     }
 
-    private fun closeAppListFragment() {
+    private fun initCloseButton() {
+        val drawable = ContextCompat.getDrawable(requireContext(), R.drawable.ic_close)
+        with(binding.buttonCloseAppList) {
+            textViewAppName.text = getString(R.string.close)
+            imageViewAppIcon.setImageDrawable(drawable)
+            imageViewAppIcon.setOnClickListener { closeAppListFragment() }
+        }
+    }
 
+    private fun closeAppListFragment() {
+        parentFragmentManager.popBackStack()
     }
 
     override fun onDestroyView() {

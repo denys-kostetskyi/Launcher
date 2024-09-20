@@ -13,4 +13,6 @@
     <string name="weather_clear">Clear</string>
     <string name="application_icon">Application icon</string>
     <string name="close_app_list">Close application\'s list</string>
+    <string name="applications">Applications</string>
+    <string name="close">Close</string>
 </resources>

@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.denyskostetskyi.launcher.R
 import com.denyskostetskyi.launcher.databinding.FragmentHomeBinding
 import com.denyskostetskyi.launcher.domain.model.SystemInfo
 import com.denyskostetskyi.launcher.domain.model.Weather
@@ -40,6 +42,24 @@ class HomeFragment : Fragment() {
             location = "Lviv"
         ))
         binding.weatherView.updateState(weatherForecastState)
+        initViews()
+    }
+
+    private fun initViews() {
+        initApplicationsButton()
+    }
+
+    private fun initApplicationsButton() {
+        val drawable = ContextCompat.getDrawable(requireContext(), R.drawable.ic_applications)
+        with(binding.buttonApplications) {
+            textViewAppName.text = getString(R.string.applications)
+            imageViewAppIcon.setImageDrawable(drawable)
+            imageViewAppIcon.setOnClickListener { launchAppListFragment() }
+        }
+    }
+
+    private fun launchAppListFragment() {
+
     }
 
     override fun onDestroyView() {

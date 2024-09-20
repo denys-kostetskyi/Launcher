@@ -1,11 +1,10 @@
 package com.denyskostetskyi.launcher.presentation.fragment
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.denyskostetskyi.launcher.R
+import androidx.fragment.app.Fragment
 import com.denyskostetskyi.launcher.databinding.FragmentAppListBinding
 
 class AppListFragment : Fragment() {

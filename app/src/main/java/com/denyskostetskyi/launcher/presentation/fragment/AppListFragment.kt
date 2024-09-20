@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import com.denyskostetskyi.launcher.R
 import com.denyskostetskyi.launcher.databinding.FragmentAppListBinding
 import com.denyskostetskyi.launcher.domain.model.AppItem
+import com.denyskostetskyi.launcher.presentation.adapter.AdaptiveGridLayoutManager
 import com.denyskostetskyi.launcher.presentation.adapter.AppListAdapter
 
 class AppListFragment : Fragment() {
@@ -41,21 +42,25 @@ class AppListFragment : Fragment() {
         adapter.onAppClicked = ::launchApp
         adapter.submitList(mockAppList)
         binding.recyclerViewAppList.adapter = adapter
+        val columnWidth = resources.getDimension(R.dimen.app_item_width)
+        binding.recyclerViewAppList.layoutManager =
+            AdaptiveGridLayoutManager(requireContext(), columnWidth)
     }
 
-    private val mockAppList: List<AppItem> get() {
-        val appList = mutableListOf<AppItem>()
-        val appIcon = ContextCompat.getDrawable(requireContext(), R.mipmap.ic_launcher_round)
-        for (i in 0..105) {
-            val appItem = AppItem(
-                appIcon = appIcon!!,
-                appName = "Application $i",
-                packageName = "com.denyskostetskyi.application$i"
-            )
-            appList.add(appItem)
+    private val mockAppList: List<AppItem>
+        get() {
+            val appList = mutableListOf<AppItem>()
+            val appIcon = ContextCompat.getDrawable(requireContext(), R.mipmap.ic_launcher_round)
+            for (i in 0..105) {
+                val appItem = AppItem(
+                    appIcon = appIcon!!,
+                    appName = "Application $i",
+                    packageName = "com.denyskostetskyi.application$i"
+                )
+                appList.add(appItem)
+            }
+            return appList
         }
-        return appList
-    }
 
     private fun launchApp(appItem: AppItem) {
         Log.d(TAG, "Launching ${appItem.packageName}")

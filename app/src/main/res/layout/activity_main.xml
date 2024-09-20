@@ -8,8 +8,8 @@
     tools:context=".presentation.activity.MainActivity">
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/map"
-        android:name="com.denyskostetskyi.launcher.presentation.fragment.HomeFragment"
+        android:id="@+id/container"
+        android:name="com.denyskostetskyi.launcher.presentation.fragment.AppListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".presentation.activity.MainActivity" />

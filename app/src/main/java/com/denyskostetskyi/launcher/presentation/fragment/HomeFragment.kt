@@ -41,4 +41,9 @@ class HomeFragment : Fragment() {
         ))
         binding.weatherView.updateState(weatherForecastState)
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

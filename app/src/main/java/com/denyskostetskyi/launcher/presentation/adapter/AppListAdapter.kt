@@ -21,6 +21,7 @@ class AppListAdapter(
         return AppItemViewHolder(binding)
     }
 
+    //TODO optimize icons load
     override fun onBindViewHolder(holder: AppItemViewHolder, position: Int) {
         val item = currentList[position]
         val icon = getAppIcon(item)

@@ -31,7 +31,8 @@ class AppListService : Service() {
         }
         return resolvedInfoList.map { info ->
             AppItem(
-                appName = info.activityInfo.name,
+                appName = info.loadLabel(packageManager).toString(),
+                activityName = info.activityInfo.name,
                 packageName = info.activityInfo.packageName
             )
         }

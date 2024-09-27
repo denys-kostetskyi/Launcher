@@ -8,12 +8,17 @@ import android.content.Context
 import android.os.PersistableBundle
 import android.util.Log
 import androidx.annotation.IntRange
+import com.denyskostetskyi.launcher.data.local.AppDatabase
+import com.denyskostetskyi.launcher.data.mapper.WeatherForecastMapper
 import com.denyskostetskyi.launcher.data.repository.WeatherForecastRepositoryImpl
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 class WeatherForecastJobService : JobService() {
-    private var executorService: ExecutorService? = null
+    private val coroutineScope = CoroutineScope(Dispatchers.IO + Job())
 
     override fun onStartJob(params: JobParameters?): Boolean {
         val location = params?.extras?.getString(KEY_LOCATION)
@@ -21,27 +26,23 @@ class WeatherForecastJobService : JobService() {
             Log.e(TAG, "Location is null. Job cannot be started.")
             return false
         }
-        executorService = Executors.newSingleThreadExecutor()
-        executorService?.submit {
-            try {
-                val repository = WeatherForecastRepositoryImpl()
-                val result = repository.fetchWeatherForecast(location)
-                if (result.isSuccess) {
-                    Log.d(TAG, "Weather data fetched successfully for location: $location")
-                } else {
-                    Log.e(TAG, "Failed to fetch weather data for location: $location")
-                }
-            } catch (e: InterruptedException) {
-                Log.e(TAG, "Weather job was interrupted", e)
-            } finally {
-                jobFinished(params, false)
+        coroutineScope.launch {
+            val dao = AppDatabase.getInstance(applicationContext).weatherForecastDao()
+            val mapper = WeatherForecastMapper()
+            val repository = WeatherForecastRepositoryImpl(dao, mapper)
+            val result = repository.fetchWeatherForecast(location)
+            if (result.isSuccess) {
+                Log.d(TAG, "Weather data fetched successfully for location: $location")
+            } else {
+                Log.e(TAG, "Failed to fetch weather data for location: $location")
             }
+            jobFinished(params, false)
         }
         return true
     }
 
     override fun onStopJob(params: JobParameters?): Boolean {
-        executorService?.shutdownNow()
+        coroutineScope.cancel()
         return true
     }
 

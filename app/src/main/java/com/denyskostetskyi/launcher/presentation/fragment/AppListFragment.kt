@@ -1,5 +1,7 @@
 package com.denyskostetskyi.launcher.presentation.fragment
 
+import android.content.pm.PackageManager.NameNotFoundException
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -36,8 +38,7 @@ class AppListFragment : Fragment() {
     }
 
     private fun initRecyclerView() {
-        val adapter = AppListAdapter()
-        adapter.onAppClicked = ::launchApp
+        val adapter = AppListAdapter(getAppIcon = ::getAppIcon, onAppClicked = ::launchApp)
         adapter.submitList(mockAppList)
         binding.recyclerViewAppList.adapter = adapter
         val columnWidth = resources.getDimension(R.dimen.app_item_width)
@@ -45,13 +46,20 @@ class AppListFragment : Fragment() {
             AdaptiveGridLayoutManager(requireContext(), columnWidth)
     }
 
+    private fun getAppIcon(appItem: AppItem): Drawable {
+        val icon = try {
+            requireContext().packageManager.getApplicationIcon(appItem.packageName)
+        } catch (e: NameNotFoundException) {
+            ContextCompat.getDrawable(requireContext(), R.mipmap.ic_launcher_round)
+        }
+        return icon!!
+    }
+
     private val mockAppList: List<AppItem>
         get() {
             val appList = mutableListOf<AppItem>()
-            val appIcon = ContextCompat.getDrawable(requireContext(), R.mipmap.ic_launcher_round)
             for (i in 0..105) {
                 val appItem = AppItem(
-                    appIcon = appIcon!!,
                     appName = "Application $i",
                     packageName = "com.denyskostetskyi.application$i"
                 )

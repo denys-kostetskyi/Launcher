@@ -31,10 +31,10 @@ class HomeFragment : Fragment() {
         val systemInfoState = SystemInfoMapper().mapToState(
             SystemInfo(
                 batteryLevel = 90,
-                availableMemory = 6.5,
-                totalMemory = 16.0,
-                availableStorage = 100.5,
-                totalStorage = 236.5
+                availableMemory = 102410241024,
+                totalMemory = 204820482048,
+                availableStorage = 102410241024,
+                totalStorage = 204820482048,
             )
         )
         binding.systemInfoView.updateState(systemInfoState)

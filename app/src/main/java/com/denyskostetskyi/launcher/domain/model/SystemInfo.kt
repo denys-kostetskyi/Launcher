@@ -2,10 +2,10 @@ package com.denyskostetskyi.launcher.domain.model
 
 data class SystemInfo(
     val batteryLevel: Int,
-    val availableMemory: Double,
-    val totalMemory: Double,
-    val availableStorage: Double,
-    val totalStorage: Double,
+    val availableMemory: Long,
+    val totalMemory: Long,
+    val availableStorage: Long,
+    val totalStorage: Long,
 ) {
     companion object {
         const val BATTERY_LEVEL_FULL = 100

@@ -11,10 +11,10 @@ class SystemInfoMapper {
         return SystemInfoState(
             batteryLevel = systemInfo.batteryLevel,
             batteryLevelIndicatorRes = batteryLevelIndicatorRes,
-            availableMemory = formatDouble(systemInfo.availableMemory),
-            totalMemory = formatDouble(systemInfo.totalMemory),
-            availableStorage = formatDouble(systemInfo.availableStorage),
-            totalStorage = formatDouble(systemInfo.totalStorage)
+            availableMemory = formatDouble(bytesToGigabytes(systemInfo.availableMemory)),
+            totalMemory = formatDouble(bytesToGigabytes(systemInfo.totalMemory)),
+            availableStorage = formatDouble(bytesToGigabytes(systemInfo.availableStorage)),
+            totalStorage = formatDouble(bytesToGigabytes(systemInfo.totalStorage)),
         )
     }
 
@@ -27,5 +27,6 @@ class SystemInfoMapper {
     }
 
 
+    private fun bytesToGigabytes(bytes: Long) = bytes.toDouble() / 1024 / 1024 / 1024
     private fun formatDouble(value: Double) = String.format(Locale.getDefault(), "%.1f", value)
 }

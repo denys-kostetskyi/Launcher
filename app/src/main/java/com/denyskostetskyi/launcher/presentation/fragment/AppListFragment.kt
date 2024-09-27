@@ -1,7 +1,9 @@
 package com.denyskostetskyi.launcher.presentation.fragment
 
+import android.content.Context
+import android.content.pm.PackageManager.NameNotFoundException
+import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,9 +19,22 @@ class AppListFragment : Fragment() {
     private var _binding: FragmentAppListBinding? = null
     private val binding get() = _binding ?: throw RuntimeException("FragmentAppListBinding is null")
 
+    private var appManager: AppManager? = null
+    private val appListAdapter = AppListAdapter(::getAppIcon) { app -> appManager?.launchApp(app) }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is AppManager) {
+            appManager = context
+        } else {
+            throw RuntimeException(
+                "Activity ${context::class.java.canonicalName} should implement AppListProvider"
+            )
+        }
+    }
+
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentAppListBinding.inflate(inflater, container, false)
         return binding.root
@@ -30,38 +45,30 @@ class AppListFragment : Fragment() {
         initViews()
     }
 
+    override fun onResume() {
+        super.onResume()
+        appListAdapter.submitList(appManager?.appList)
+    }
+
     private fun initViews() {
         initRecyclerView()
         initCloseButton()
     }
 
     private fun initRecyclerView() {
-        val adapter = AppListAdapter()
-        adapter.onAppClicked = ::launchApp
-        adapter.submitList(mockAppList)
-        binding.recyclerViewAppList.adapter = adapter
+        binding.recyclerViewAppList.adapter = appListAdapter
         val columnWidth = resources.getDimension(R.dimen.app_item_width)
         binding.recyclerViewAppList.layoutManager =
             AdaptiveGridLayoutManager(requireContext(), columnWidth)
     }
 
-    private val mockAppList: List<AppItem>
-        get() {
-            val appList = mutableListOf<AppItem>()
-            val appIcon = ContextCompat.getDrawable(requireContext(), R.mipmap.ic_launcher_round)
-            for (i in 0..105) {
-                val appItem = AppItem(
-                    appIcon = appIcon!!,
-                    appName = "Application $i",
-                    packageName = "com.denyskostetskyi.application$i"
-                )
-                appList.add(appItem)
-            }
-            return appList
+    private fun getAppIcon(appItem: AppItem): Drawable {
+        val icon = try {
+            requireContext().packageManager.getApplicationIcon(appItem.packageName)
+        } catch (e: NameNotFoundException) {
+            ContextCompat.getDrawable(requireContext(), R.mipmap.ic_launcher_round)
         }
-
-    private fun launchApp(appItem: AppItem) {
-        Log.d(TAG, "Launching ${appItem.packageName}")
+        return icon!!
     }
 
     private fun initCloseButton() {
@@ -80,6 +87,12 @@ class AppListFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    interface AppManager {
+        val appList: List<AppItem>
+
+        fun launchApp(app: AppItem)
     }
 
     companion object {

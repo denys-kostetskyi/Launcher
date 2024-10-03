@@ -4,9 +4,9 @@ import com.google.gson.annotations.SerializedName
 
 data class HourlyDataDto(
     @SerializedName("time")
-    val timeArray: List<String>,
+    val timeList: List<String>,
     @SerializedName("temperature_2m")
-    val temperatureArray: List<Double>,
+    val temperatureList: List<Double>,
     @SerializedName("weather_code")
-    val weatherCodeArray: List<Int>,
+    val weatherCodeList: List<Int>,
 )

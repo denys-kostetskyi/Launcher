@@ -8,7 +8,7 @@ import com.denyskostetskyi.weatherforecast.library.domain.model.Weather
 data class HourlyWeatherForecastEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val timeIso8601: String,
-    val temperature: Int,
+    val temperature: Double,
     val weather: Weather,
     val location: String,
 )

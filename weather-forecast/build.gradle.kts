@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -44,6 +45,10 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation (libs.retrofit)
     implementation (libs.retrofit2.converter.gson)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    annotationProcessor(libs.androidx.room.compiler)
+    ksp(libs.androidx.room.compiler)
     implementation(project(":weather-forecast-library"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

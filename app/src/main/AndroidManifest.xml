@@ -6,7 +6,11 @@
         android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
 
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="com.denyskostetskyi.weatherforecast.permission.WEATHER_FORECAST_SERVICE" />
+
+    <queries>
+        <package android:name="com.denyskostetskyi.weatherforecast" />
+    </queries>
 
     <application
         android:allowBackup="true"

@@ -11,15 +11,42 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.denyskostetskyi.launcher.R
 import com.denyskostetskyi.launcher.domain.model.AppItem
 import com.denyskostetskyi.launcher.domain.model.SystemInfo
 import com.denyskostetskyi.launcher.presentation.fragment.AppListFragment
 import com.denyskostetskyi.launcher.presentation.service.AppListService
 import com.denyskostetskyi.launcher.presentation.service.SystemInfoService
-
+import com.denyskostetskyi.weatherforecast.library.IWeatherForecastService
+import com.denyskostetskyi.weatherforecast.library.WeatherForecastServiceHelper
+import com.denyskostetskyi.weatherforecast.library.domain.model.Location
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(), AppListFragment.AppManager {
+    private var weatherForecastServiceBinder: IWeatherForecastService? = null
+    private val weatherForecastServiceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            weatherForecastServiceBinder = IWeatherForecastService.Stub.asInterface(service)
+            Log.d(TAG, "Bound to ${name?.className}")
+            lifecycleScope.launch {
+                val weatherForecast = weatherForecastServiceBinder?.getHourlyWeatherForecast(
+                    Location(
+                        name = "Lviv",
+                        latitude = 49.8397,
+                        longitude = 24.0297
+                    ),
+                    "2024-10-04T16:00"
+                )
+                Log.d(TAG, weatherForecast.toString())
+            }
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            weatherForecastServiceBinder = null
+        }
+    }
+
     private var systemInfoServiceBinder: SystemInfoService.ServiceBinder? = null
     private val systemInfoServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
@@ -67,6 +94,7 @@ class MainActivity : AppCompatActivity(), AppListFragment.AppManager {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        bindWeatherForecastService()
         bindSystemInfoService()
         bindAppListService()
     }
@@ -75,6 +103,14 @@ class MainActivity : AppCompatActivity(), AppListFragment.AppManager {
         unbindService(systemInfoServiceConnection)
         unbindService(appListServiceConnection)
         super.onDestroy()
+    }
+
+    private fun bindWeatherForecastService() {
+        val intent = WeatherForecastServiceHelper.newIntent()
+        val result = bindService(intent, weatherForecastServiceConnection, Context.BIND_AUTO_CREATE)
+        if (!result) {
+            Log.d(TAG, "WeatherForecastService bind failed")
+        }
     }
 
     private fun bindSystemInfoService() {

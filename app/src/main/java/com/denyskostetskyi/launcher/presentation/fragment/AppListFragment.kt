@@ -9,15 +9,22 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.denyskostetskyi.launcher.R
 import com.denyskostetskyi.launcher.databinding.FragmentAppListBinding
 import com.denyskostetskyi.launcher.domain.model.AppItem
 import com.denyskostetskyi.launcher.presentation.adapter.AdaptiveGridLayoutManager
 import com.denyskostetskyi.launcher.presentation.adapter.AppListAdapter
+import com.denyskostetskyi.launcher.presentation.viewmodel.AppListViewModel
+import com.denyskostetskyi.launcher.presentation.viewmodel.SharedViewModel
 
 class AppListFragment : Fragment() {
     private var _binding: FragmentAppListBinding? = null
     private val binding get() = _binding ?: throw RuntimeException("FragmentAppListBinding is null")
+
+    private val viewModel: AppListViewModel by lazy {
+        ViewModelProvider(requireActivity())[SharedViewModel::class.java]
+    }
 
     private var appManager: AppManager? = null
     private val appListAdapter = AppListAdapter(::getAppIcon) { app -> appManager?.launchApp(app) }
@@ -43,16 +50,18 @@ class AppListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        appListAdapter.submitList(appManager?.appList)
+        observeViewModel()
     }
 
     private fun initViews() {
         initRecyclerView()
         initCloseButton()
+    }
+
+    private fun observeViewModel() {
+        viewModel.appList.observe(viewLifecycleOwner) {
+            appListAdapter.submitList(it)
+        }
     }
 
     private fun initRecyclerView() {

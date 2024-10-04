@@ -11,6 +11,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.denyskostetskyi.launcher.R
 import com.denyskostetskyi.launcher.domain.model.AppItem
@@ -18,12 +19,17 @@ import com.denyskostetskyi.launcher.domain.model.SystemInfo
 import com.denyskostetskyi.launcher.presentation.fragment.AppListFragment
 import com.denyskostetskyi.launcher.presentation.service.AppListService
 import com.denyskostetskyi.launcher.presentation.service.SystemInfoService
+import com.denyskostetskyi.launcher.presentation.viewmodel.MainViewModel
+import com.denyskostetskyi.launcher.presentation.viewmodel.SharedViewModel
 import com.denyskostetskyi.weatherforecast.library.IWeatherForecastService
 import com.denyskostetskyi.weatherforecast.library.WeatherForecastServiceHelper
 import com.denyskostetskyi.weatherforecast.library.domain.model.Location
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(), AppListFragment.AppManager {
+    private val viewModel: MainViewModel by lazy {
+        ViewModelProvider(this)[SharedViewModel::class.java]
+    }
     private var weatherForecastServiceBinder: IWeatherForecastService? = null
     private val weatherForecastServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
@@ -38,6 +44,9 @@ class MainActivity : AppCompatActivity(), AppListFragment.AppManager {
                     ),
                     "2024-10-04T02:00"
                 )
+                weatherForecast?.let {
+                    viewModel.updateWeatherForecast(it)
+                }
                 Log.d(TAG, weatherForecast.toString())
             }
         }
@@ -66,6 +75,10 @@ class MainActivity : AppCompatActivity(), AppListFragment.AppManager {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             appListServiceBinder = service as AppListService.ServiceBinder
             Log.d(TAG, "Bound to ${name?.className}")
+            val appList = appListServiceBinder?.appList
+            appList?.let {
+                viewModel.updateAppList(it)
+            }
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -130,6 +143,7 @@ class MainActivity : AppCompatActivity(), AppListFragment.AppManager {
     }
 
     private fun onSystemInfoChanged(systemInfo: SystemInfo) {
+        viewModel.updateSystemInfo(systemInfo)
         Log.d(TAG, systemInfo.toString())
     }
 

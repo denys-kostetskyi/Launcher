@@ -36,7 +36,12 @@ class WeatherForecastMapper {
 
     @DrawableRes
     private fun getWeatherIcon(weather: Weather) = when (weather) {
-        Weather.CLEAR -> R.drawable.weather_day_clear
-        else -> R.drawable.weather_unknown //TODO add rest of weather icons
+        Weather.CLEAR -> R.drawable.weather_clear
+        Weather.CLOUDY -> R.drawable.weather_cloudy
+        Weather.FOG -> R.drawable.weather_fog
+        Weather.RAIN -> R.drawable.weather_rain
+        Weather.SNOW -> R.drawable.weather_snow
+        Weather.THUNDERSTORM -> R.drawable.weather_thunder
+        Weather.UNKNOWN -> R.drawable.weather_unknown
     }
 }

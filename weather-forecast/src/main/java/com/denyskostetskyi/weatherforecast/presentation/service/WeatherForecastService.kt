@@ -4,18 +4,38 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
+import com.denyskostetskyi.weatherforecast.WeatherForecastApplication
 import com.denyskostetskyi.weatherforecast.domain.repository.WeatherForecastRepository
+import com.denyskostetskyi.weatherforecast.library.IWeatherForecastService
 import com.denyskostetskyi.weatherforecast.library.domain.model.HourlyWeatherForecast
 import com.denyskostetskyi.weatherforecast.library.domain.model.Location
+import kotlinx.coroutines.runBlocking
 
 class WeatherForecastService : Service() {
     private lateinit var repository: WeatherForecastRepository
 
-    override fun onBind(intent: Intent): IBinder {
-        TODO("Return the communication channel to the service.")
+    private val binder = object : IWeatherForecastService.Stub() {
+        override fun getHourlyWeatherForecast(
+            location: Location,
+            dateTime: String
+        ): HourlyWeatherForecast? {
+            return runBlocking {
+                getHourlyWeatherForecastInternal(location, dateTime)
+            }
+        }
     }
 
-    private suspend fun getHourlyWeatherForecast(
+    override fun onCreate() {
+        super.onCreate()
+        repository = (application as WeatherForecastApplication).weatherForecastRepository
+    }
+
+    override fun onBind(intent: Intent): IBinder {
+        Log.d(TAG, "onBind")
+        return binder
+    }
+
+    private suspend fun getHourlyWeatherForecastInternal(
         location: Location,
         dateTime: String
     ): HourlyWeatherForecast? {

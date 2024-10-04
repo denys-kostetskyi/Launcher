@@ -2,9 +2,9 @@
 package com.denyskostetskyi.weatherforecast.library;
 
 // Declare any non-default types here with import statements
-import com.denyskostetskyi.weatherforecast.library.Location;
-import com.denyskostetskyi.weatherforecast.library.HourlyWeatherForecast;
+import com.denyskostetskyi.weatherforecast.library.domain.model.Location;
+import com.denyskostetskyi.weatherforecast.library.domain.model.HourlyWeatherForecast;
 
 interface IWeatherForecastService {
-    HourlyWeatherForecast getHourlyWeatherForecast(Location location, String dateTime);
+    @nullable HourlyWeatherForecast getHourlyWeatherForecast(in Location location, String dateTime);
 }

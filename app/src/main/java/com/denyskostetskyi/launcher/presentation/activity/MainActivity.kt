@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity(), AppListFragment.AppManager {
                         latitude = 49.8397,
                         longitude = 24.0297
                     ),
-                    "2024-10-04T16:00"
+                    "2024-10-04T02:00"
                 )
                 Log.d(TAG, weatherForecast.toString())
             }

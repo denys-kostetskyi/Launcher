@@ -42,7 +42,8 @@ class WeatherForecastRepositoryImpl(
                     if (fetchResult.isSuccess) {
                         getHourlyWeatherForecastInternal(location, dateTime)
                     } else {
-                        Result.failure(RuntimeException("Unable to fetch weather data for location: $location"))
+                        val reason = fetchResult.exceptionOrNull().toString()
+                        Result.failure(RuntimeException("Unable to fetch weather data for location: $location Reason: $reason"))
                     }
                 } else {
                     result

@@ -20,6 +20,7 @@ data class HourlyWeatherForecast(
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(dateTime)
         parcel.writeDouble(temperature)
+        parcel.writeString(weather.name)
         parcel.writeParcelable(location, flags)
     }
 

@@ -1,6 +1,5 @@
 package com.denyskostetskyi.launcher.presentation.activity
 
-import android.app.job.JobScheduler
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -12,16 +11,42 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.denyskostetskyi.launcher.R
 import com.denyskostetskyi.launcher.domain.model.AppItem
 import com.denyskostetskyi.launcher.domain.model.SystemInfo
 import com.denyskostetskyi.launcher.presentation.fragment.AppListFragment
 import com.denyskostetskyi.launcher.presentation.service.AppListService
 import com.denyskostetskyi.launcher.presentation.service.SystemInfoService
-import com.denyskostetskyi.launcher.presentation.service.WeatherForecastJobService
-
+import com.denyskostetskyi.weatherforecast.library.IWeatherForecastService
+import com.denyskostetskyi.weatherforecast.library.WeatherForecastServiceHelper
+import com.denyskostetskyi.weatherforecast.library.domain.model.Location
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(), AppListFragment.AppManager {
+    private var weatherForecastServiceBinder: IWeatherForecastService? = null
+    private val weatherForecastServiceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            weatherForecastServiceBinder = IWeatherForecastService.Stub.asInterface(service)
+            Log.d(TAG, "Bound to ${name?.className}")
+            lifecycleScope.launch {
+                val weatherForecast = weatherForecastServiceBinder?.getHourlyWeatherForecast(
+                    Location(
+                        name = "Lviv",
+                        latitude = 49.8397,
+                        longitude = 24.0297
+                    ),
+                    "2024-10-04T02:00"
+                )
+                Log.d(TAG, weatherForecast.toString())
+            }
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            weatherForecastServiceBinder = null
+        }
+    }
+
     private var systemInfoServiceBinder: SystemInfoService.ServiceBinder? = null
     private val systemInfoServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
@@ -69,15 +94,23 @@ class MainActivity : AppCompatActivity(), AppListFragment.AppManager {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        bindWeatherForecastService()
         bindSystemInfoService()
         bindAppListService()
-        scheduleWeatherForecastJob()
     }
 
     override fun onDestroy() {
         unbindService(systemInfoServiceConnection)
         unbindService(appListServiceConnection)
         super.onDestroy()
+    }
+
+    private fun bindWeatherForecastService() {
+        val intent = WeatherForecastServiceHelper.newIntent()
+        val result = bindService(intent, weatherForecastServiceConnection, Context.BIND_AUTO_CREATE)
+        if (!result) {
+            Log.d(TAG, "WeatherForecastService bind failed")
+        }
     }
 
     private fun bindSystemInfoService() {
@@ -96,16 +129,6 @@ class MainActivity : AppCompatActivity(), AppListFragment.AppManager {
         }
     }
 
-    private fun scheduleWeatherForecastJob() {
-        val jobInfo = WeatherForecastJobService.newJob(
-            context = this,
-            location = WEATHER_FORECAST_LOCATION,
-            interval = WEATHER_FORECAST_UPDATE_INTERVAL
-        )
-        val jobScheduler = getSystemService(JobScheduler::class.java)
-        jobScheduler.schedule(jobInfo)
-    }
-
     private fun onSystemInfoChanged(systemInfo: SystemInfo) {
         Log.d(TAG, systemInfo.toString())
     }
@@ -113,7 +136,5 @@ class MainActivity : AppCompatActivity(), AppListFragment.AppManager {
     companion object {
         private const val TAG = "MainActivity"
         private const val SYSTEM_INFO_UPDATE_DELAY = 60_000L
-        private const val WEATHER_FORECAST_UPDATE_INTERVAL = 3 * 60 * 60 * 1000L
-        private const val WEATHER_FORECAST_LOCATION = "Lviv"
     }
 }

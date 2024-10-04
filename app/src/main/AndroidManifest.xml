@@ -6,7 +6,11 @@
         android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
 
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="com.denyskostetskyi.weatherforecast.permission.WEATHER_FORECAST_SERVICE" />
+
+    <queries>
+        <package android:name="com.denyskostetskyi.weatherforecast" />
+    </queries>
 
     <application
         android:allowBackup="true"
@@ -17,12 +21,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Launcher">
-
-        <service
-            android:name=".presentation.service.WeatherForecastJobService"
-            android:enabled="true"
-            android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <activity
             android:name=".presentation.activity.MainActivity"

@@ -21,3 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "Launcher"
 include(":app")
+include(":weather-forecast-library")
+include(":weather-forecast")

@@ -7,7 +7,7 @@
     <string name="total_memory">Total memory: %1$s GB</string>
     <string name="available_storage">Available storage: %1$s GB</string>
     <string name="total_storage">Total storage: %1$s GB</string>
-    <string name="temperature_celsius">%1$d°C</string>
+    <string name="temperature_celsius">%1$f°C</string>
     <string name="your_location">Your location</string>
     <string name="weather_forecast">Weather forecast</string>
     <string name="weather_clear">Clear</string>
@@ -15,4 +15,10 @@
     <string name="close_app_list">Close application\'s list</string>
     <string name="applications">Applications</string>
     <string name="close">Close</string>
+    <string name="weather_cloudy">Cloudy</string>
+    <string name="weather_fog">Fog</string>
+    <string name="weather_rain">Rain</string>
+    <string name="weather_snow">Snow</string>
+    <string name="weather_thunderstorm">Thunderstorm</string>
+    <string name="weather_unknown">Unknown</string>
 </resources>

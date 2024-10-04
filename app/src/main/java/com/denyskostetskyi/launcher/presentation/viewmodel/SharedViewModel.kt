@@ -34,7 +34,8 @@ class SharedViewModel : ViewModel(), MainViewModel, HomeViewModel, AppListViewMo
     override val appList: LiveData<List<AppItem>>
         get() = _appList
 
-    override fun updateClock(calendar: Calendar) {
+    override fun updateClock() {
+        val calendar = Calendar.getInstance()
         val time = DateFormat.format(TIME_FORMAT, calendar)
         val date = DateFormat.format(DATE_FORMAT, calendar)
         _clock.postValue(ClockState(time, date))

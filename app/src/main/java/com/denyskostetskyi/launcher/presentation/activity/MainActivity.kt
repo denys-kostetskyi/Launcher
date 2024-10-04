@@ -2,7 +2,6 @@ package com.denyskostetskyi.launcher.presentation.activity
 
 import android.content.ComponentName
 import android.content.Context
-import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
@@ -14,9 +13,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.denyskostetskyi.launcher.R
-import com.denyskostetskyi.launcher.domain.model.AppItem
 import com.denyskostetskyi.launcher.domain.model.SystemInfo
-import com.denyskostetskyi.launcher.presentation.fragment.AppListFragment
 import com.denyskostetskyi.launcher.presentation.service.AppListService
 import com.denyskostetskyi.launcher.presentation.service.SystemInfoService
 import com.denyskostetskyi.launcher.presentation.viewmodel.MainViewModel
@@ -26,7 +23,7 @@ import com.denyskostetskyi.weatherforecast.library.WeatherForecastServiceHelper
 import com.denyskostetskyi.weatherforecast.library.domain.model.Location
 import kotlinx.coroutines.launch
 
-class MainActivity : AppCompatActivity(), AppListFragment.AppManager {
+class MainActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by lazy {
         ViewModelProvider(this)[SharedViewModel::class.java]
     }
@@ -84,18 +81,6 @@ class MainActivity : AppCompatActivity(), AppListFragment.AppManager {
         override fun onServiceDisconnected(name: ComponentName?) {
             appListServiceBinder = null
         }
-    }
-
-    override val appList: List<AppItem>
-        get() = appListServiceBinder?.appList ?: emptyList()
-
-    override fun launchApp(app: AppItem) {
-        val intent = Intent(Intent.ACTION_MAIN).apply {
-            addCategory(Intent.CATEGORY_LAUNCHER)
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
-            component = ComponentName(app.packageName, app.activityName)
-        }
-        startActivity(intent)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

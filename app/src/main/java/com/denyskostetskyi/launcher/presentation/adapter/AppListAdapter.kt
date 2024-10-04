@@ -25,13 +25,10 @@ class AppListAdapter(
     override fun onBindViewHolder(holder: AppItemViewHolder, position: Int) {
         val item = currentList[position]
         val icon = getAppIcon(item)
-        val state = AppItemState(
-            appIcon = icon,
-            appName = item.appName
-        )
+        val state = AppItemState(appIcon = icon, appName = item.appName)
         holder.bind(state)
         holder.binding.imageViewAppIcon.setOnClickListener {
-            onAppClicked.invoke(item)
+            onAppClicked(item)
         }
     }
 }

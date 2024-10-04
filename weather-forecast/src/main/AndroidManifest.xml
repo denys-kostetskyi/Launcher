@@ -8,8 +8,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Launcher">
+        <service
+            android:name=".presentation.service.WeatherForecastService"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="com.denyskostetskyi.weatherforecast.permission.WEATHER_FORECAST_SERVICE" />
+
         <activity
-            android:name=".MainActivity"
+            android:name=".presentation.activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

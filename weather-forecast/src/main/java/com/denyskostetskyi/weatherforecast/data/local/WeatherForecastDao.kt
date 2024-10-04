@@ -16,4 +16,7 @@ interface WeatherForecastDao {
         time: String,
         location: String
     ): HourlyWeatherForecastEntity?
+
+    @Query("DELETE FROM weather_forecasts WHERE location = :location")
+    suspend fun deleteWeatherForecastForLocation(location: String)
 }

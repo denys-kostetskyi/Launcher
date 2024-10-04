@@ -18,12 +18,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Launcher">
 
-        <service
-            android:name=".presentation.service.WeatherForecastJobService"
-            android:enabled="true"
-            android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-
         <activity
             android:name=".presentation.activity.MainActivity"
             android:exported="true">

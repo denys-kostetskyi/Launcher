@@ -1,6 +1,5 @@
 package com.denyskostetskyi.launcher.presentation.activity
 
-import android.app.job.JobScheduler
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -18,7 +17,6 @@ import com.denyskostetskyi.launcher.domain.model.SystemInfo
 import com.denyskostetskyi.launcher.presentation.fragment.AppListFragment
 import com.denyskostetskyi.launcher.presentation.service.AppListService
 import com.denyskostetskyi.launcher.presentation.service.SystemInfoService
-import com.denyskostetskyi.launcher.presentation.service.WeatherForecastJobService
 
 
 class MainActivity : AppCompatActivity(), AppListFragment.AppManager {
@@ -71,7 +69,6 @@ class MainActivity : AppCompatActivity(), AppListFragment.AppManager {
         }
         bindSystemInfoService()
         bindAppListService()
-        scheduleWeatherForecastJob()
     }
 
     override fun onDestroy() {
@@ -96,16 +93,6 @@ class MainActivity : AppCompatActivity(), AppListFragment.AppManager {
         }
     }
 
-    private fun scheduleWeatherForecastJob() {
-        val jobInfo = WeatherForecastJobService.newJob(
-            context = this,
-            location = WEATHER_FORECAST_LOCATION,
-            interval = WEATHER_FORECAST_UPDATE_INTERVAL
-        )
-        val jobScheduler = getSystemService(JobScheduler::class.java)
-        jobScheduler.schedule(jobInfo)
-    }
-
     private fun onSystemInfoChanged(systemInfo: SystemInfo) {
         Log.d(TAG, systemInfo.toString())
     }
@@ -113,7 +100,5 @@ class MainActivity : AppCompatActivity(), AppListFragment.AppManager {
     companion object {
         private const val TAG = "MainActivity"
         private const val SYSTEM_INFO_UPDATE_DELAY = 60_000L
-        private const val WEATHER_FORECAST_UPDATE_INTERVAL = 3 * 60 * 60 * 1000L
-        private const val WEATHER_FORECAST_LOCATION = "Lviv"
     }
 }

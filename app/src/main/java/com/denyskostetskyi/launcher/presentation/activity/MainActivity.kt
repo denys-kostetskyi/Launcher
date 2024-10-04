@@ -1,7 +1,10 @@
 package com.denyskostetskyi.launcher.presentation.activity
 
+import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
@@ -57,12 +60,18 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private val appListChangeReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            updateAppList()
+        }
+    }
     private var appListServiceBinder: AppListService.ServiceBinder? = null
     private val appListServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             appListServiceBinder = service as AppListService.ServiceBinder
             Log.d(TAG, "Bound to ${name?.className}")
-            scheduleAppListUpdate()
+            updateAppList()
+            registerAppListChangeReceiver()
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -109,6 +118,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun registerAppListChangeReceiver() {
+        val intentFilter = IntentFilter().apply {
+            addAction(Intent.ACTION_PACKAGE_ADDED)
+            addAction(Intent.ACTION_PACKAGE_REMOVED)
+            addAction(Intent.ACTION_PACKAGE_CHANGED)
+            addDataScheme(DATA_SCHEME_PACKAGE)
+        }
+        registerReceiver(appListChangeReceiver, intentFilter)
+    }
+
     private fun scheduleTask(coroutineContext: CoroutineContext, delay: Long, task: () -> Unit) {
         lifecycleScope.launch(coroutineContext) {
             while (isActive) {
@@ -139,13 +158,12 @@ class MainActivity : AppCompatActivity() {
         scheduleTask(Dispatchers.Default, SYSTEM_INFO_UPDATE_DELAY) {
             systemInfoServiceBinder?.getSystemInfo()?.let {
                 viewModel.updateSystemInfo(it)
-                Log.d(TAG, it.toString())
             }
         }
     }
 
-    private fun scheduleAppListUpdate() {
-        scheduleTask(Dispatchers.Default, APP_LIST_UPDATE_DELAY) {
+    private fun updateAppList() {
+        lifecycleScope.launch {
             appListServiceBinder?.appList?.let {
                 viewModel.updateAppList(it)
             }
@@ -156,15 +174,16 @@ class MainActivity : AppCompatActivity() {
         unbindService(weatherForecastServiceConnection)
         unbindService(systemInfoServiceConnection)
         unbindService(appListServiceConnection)
+        unregisterReceiver(appListChangeReceiver)
         super.onDestroy()
     }
 
     companion object {
         private const val TAG = "MainActivity"
+        private const val DATA_SCHEME_PACKAGE = "package"
         private const val CLOCK_UPDATE_DELAY = 1000L
         private const val WEATHER_FORECAST_UPDATE_DELAY = 60 * 60 * 1000L
         private const val SYSTEM_INFO_UPDATE_DELAY = 10 * 60 * 1000L
-        private const val APP_LIST_UPDATE_DELAY = 30 * 60 * 1000L
 
         private val weatherForecastLocation =
             Location(name = "Lviv", latitude = 49.8397, longitude = 24.0297)

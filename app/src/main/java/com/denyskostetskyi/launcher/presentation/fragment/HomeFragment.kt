@@ -39,6 +39,9 @@ class HomeFragment : Fragment() {
     }
 
     private fun observeViewModel() {
+        viewModel.clock.observe(viewLifecycleOwner) {
+            binding.clockView.updateState(it)
+        }
         viewModel.weatherForecast.observe(viewLifecycleOwner) {
             binding.weatherView.updateState(it)
         }

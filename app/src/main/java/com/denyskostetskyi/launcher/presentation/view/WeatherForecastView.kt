@@ -19,10 +19,12 @@ class WeatherForecastView @JvmOverloads constructor(
     )
 
     fun updateState(state: WeatherForecastState) {
+        val temperature = context.getString(R.string.temperature_celsius, state.temperature)
+        val weather = context.getString(state.weather)
         val weatherIcon = ContextCompat.getDrawable(context, state.weatherIcon)
         with(binding) {
-            textViewTemperature.text = context.getString(R.string.temperature_celsius, state.temperature)
-            textViewWeather.text = context.getString(state.weather)
+            textViewTemperature.text = temperature
+            textViewWeather.text = weather
             textViewLocation.text = state.location
             imageViewWeather.setImageDrawable(weatherIcon)
         }

@@ -7,7 +7,7 @@
     <string name="total_memory">Total memory: %1$s GB</string>
     <string name="available_storage">Available storage: %1$s GB</string>
     <string name="total_storage">Total storage: %1$s GB</string>
-    <string name="temperature_celsius">%1$f°C</string>
+    <string name="temperature_celsius">%1$s°C</string>
     <string name="your_location">Your location</string>
     <string name="weather_forecast">Weather forecast</string>
     <string name="weather_clear">Clear</string>

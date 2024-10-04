@@ -12,22 +12,26 @@ import com.denyskostetskyi.launcher.presentation.state.SystemInfoState
 class SystemInfoView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
 ) : ConstraintLayout(context, attrs) {
-    private val binding =
-        SystemInfoViewLayoutBinding.inflate(LayoutInflater.from(context), this, true)
+    private val binding = SystemInfoViewLayoutBinding.inflate(
+        LayoutInflater.from(context),
+        this,
+        true
+    )
 
     fun updateState(state: SystemInfoState) {
+        val batteryLevel = context.getString(R.string.battery_level, state.batteryLevel)
         val batteryDrawable = ContextCompat.getDrawable(context, state.batteryLevelIndicatorRes)
+        val availableMemory = context.getString(R.string.available_memory, state.availableMemory)
+        val totalMemory = context.getString(R.string.total_memory, state.totalMemory)
+        val availableStorage = context.getString(R.string.available_storage, state.availableStorage)
+        val totalStorage = context.getString(R.string.total_storage, state.totalStorage)
         with(binding) {
-            textViewBatteryLevel.text =
-                context.getString(R.string.battery_level, state.batteryLevel)
+            textViewBatteryLevel.text = batteryLevel
             imageViewBatteryLevel.setImageDrawable(batteryDrawable)
-            textViewAvailableMemory.text =
-                context.getString(R.string.available_memory, state.availableMemory)
-            textViewTotalMemory.text = context.getString(R.string.total_memory, state.totalMemory)
-            textViewAvailableStorage.text =
-                context.getString(R.string.available_storage, state.availableStorage)
-            textViewTotalStorage.text =
-                context.getString(R.string.total_storage, state.totalStorage)
+            textViewAvailableMemory.text = availableMemory
+            textViewTotalMemory.text = totalMemory
+            textViewAvailableStorage.text = availableStorage
+            textViewTotalStorage.text = totalStorage
         }
     }
 }

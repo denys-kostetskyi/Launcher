@@ -3,20 +3,25 @@ package com.denyskostetskyi.launcher.presentation.state
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.denyskostetskyi.launcher.R
-import com.denyskostetskyi.weatherforecast.library.domain.model.Weather
 import com.denyskostetskyi.weatherforecast.library.domain.model.HourlyWeatherForecast
+import com.denyskostetskyi.weatherforecast.library.domain.model.Weather
+import java.util.Locale
 
 class WeatherForecastMapper {
     fun mapToState(weatherForecast: HourlyWeatherForecast): WeatherForecastState {
+        val temperature = formatTemperature(weatherForecast.temperature)
         val weather = getWeather(weatherForecast.weather)
         val weatherIcon = getWeatherIcon(weatherForecast.weather)
         return WeatherForecastState(
-            temperature = weatherForecast.temperature,
+            temperature = temperature,
             weather = weather,
             location = weatherForecast.location.name,
             weatherIcon = weatherIcon,
         )
     }
+
+    private fun formatTemperature(temperature: Double) =
+        String.format(Locale.getDefault(), "%.1f", temperature)
 
     @StringRes
     private fun getWeather(weather: Weather) = when (weather) {

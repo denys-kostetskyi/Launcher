@@ -89,6 +89,10 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
         scheduleClockUpdate()
         bindWeatherForecastService()
         bindSystemInfoService()
@@ -171,12 +175,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onDestroy() {
+    override fun onPause() {
         unbindService(weatherForecastServiceConnection)
         unbindService(systemInfoServiceConnection)
         unbindService(appListServiceConnection)
         unregisterReceiver(appListChangeReceiver)
-        super.onDestroy()
+        super.onPause()
     }
 
     companion object {

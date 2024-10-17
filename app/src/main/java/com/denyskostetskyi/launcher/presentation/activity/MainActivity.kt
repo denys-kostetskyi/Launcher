@@ -7,14 +7,14 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.Handler
+import android.os.HandlerThread
 import android.os.IBinder
 import android.util.Log
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.denyskostetskyi.launcher.R
 import com.denyskostetskyi.launcher.presentation.service.AppListService
 import com.denyskostetskyi.launcher.presentation.service.SystemInfoService
@@ -23,11 +23,6 @@ import com.denyskostetskyi.launcher.presentation.viewmodel.SharedViewModel
 import com.denyskostetskyi.weatherforecast.library.IWeatherForecastService
 import com.denyskostetskyi.weatherforecast.library.WeatherForecastServiceHelper
 import com.denyskostetskyi.weatherforecast.library.domain.model.Location
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
-import kotlin.coroutines.CoroutineContext
 
 class MainActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by lazy {
@@ -65,6 +60,7 @@ class MainActivity : AppCompatActivity() {
             updateAppList()
         }
     }
+
     private var appListServiceBinder: AppListService.ServiceBinder? = null
     private val appListServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
@@ -79,9 +75,45 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private val handlerThread = HandlerThread(HANDLER_THREAD_NAME).apply { start() }
+    private val handler = Handler(handlerThread.looper)
+
+    private val clockRunnable = object : Runnable {
+        override fun run() {
+            viewModel.updateClock()
+            handler.postDelayed(this, CLOCK_UPDATE_DELAY)
+        }
+    }
+
+    private val weatherForecastRunnable = object : Runnable {
+        override fun run() {
+            weatherForecastServiceBinder?.getHourlyWeatherForecast(
+                weatherForecastLocation,
+                WeatherForecastServiceHelper.getTimeString()
+            )?.let {
+                viewModel.updateWeatherForecast(it)
+            }
+            handler.postDelayed(this, WEATHER_FORECAST_UPDATE_DELAY)
+        }
+    }
+
+    private val systemInfoRunnable = object : Runnable {
+        override fun run() {
+            systemInfoServiceBinder?.getSystemInfo()?.let {
+                viewModel.updateSystemInfo(it)
+            }
+            handler.postDelayed(this, SYSTEM_INFO_UPDATE_DELAY)
+        }
+    }
+
+    private val appListRunnable = Runnable {
+        appListServiceBinder?.appList?.let {
+            viewModel.updateAppList(it)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_main)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -92,7 +124,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        scheduleClockUpdate()
+        handler.post(clockRunnable)
         bindWeatherForecastService()
         bindSystemInfoService()
         bindAppListService()
@@ -132,58 +164,33 @@ class MainActivity : AppCompatActivity() {
         registerReceiver(appListChangeReceiver, intentFilter)
     }
 
-    private fun scheduleTask(coroutineContext: CoroutineContext, delay: Long, task: () -> Unit) {
-        lifecycleScope.launch(coroutineContext) {
-            while (isActive) {
-                task()
-                delay(delay)
-            }
-        }
-    }
-
-    private fun scheduleClockUpdate() {
-        scheduleTask(Dispatchers.Default, CLOCK_UPDATE_DELAY) {
-            viewModel.updateClock()
-        }
-    }
-
-    private fun scheduleWeatherForecastUpdate() {
-        scheduleTask(Dispatchers.IO, WEATHER_FORECAST_UPDATE_DELAY) {
-            weatherForecastServiceBinder?.getHourlyWeatherForecast(
-                weatherForecastLocation,
-                WeatherForecastServiceHelper.getTimeString()
-            )?.let {
-                viewModel.updateWeatherForecast(it)
-            }
-        }
-    }
-
-    private fun scheduleSystemInfoUpdate() {
-        scheduleTask(Dispatchers.Default, SYSTEM_INFO_UPDATE_DELAY) {
-            systemInfoServiceBinder?.getSystemInfo()?.let {
-                viewModel.updateSystemInfo(it)
-            }
-        }
-    }
-
     private fun updateAppList() {
-        lifecycleScope.launch {
-            appListServiceBinder?.appList?.let {
-                viewModel.updateAppList(it)
-            }
-        }
+        handler.post(appListRunnable)
     }
 
     override fun onPause() {
+        super.onPause()
+        handler.removeCallbacks(clockRunnable)
+        handler.removeCallbacks(weatherForecastRunnable)
+        handler.removeCallbacks(systemInfoRunnable)
+
         unbindService(weatherForecastServiceConnection)
         unbindService(systemInfoServiceConnection)
         unbindService(appListServiceConnection)
         unregisterReceiver(appListChangeReceiver)
-        super.onPause()
+    }
+
+    private fun scheduleWeatherForecastUpdate() {
+        handler.post(weatherForecastRunnable)
+    }
+
+    private fun scheduleSystemInfoUpdate() {
+        handler.post(systemInfoRunnable)
     }
 
     companion object {
         private const val TAG = "MainActivity"
+        private const val HANDLER_THREAD_NAME = "TaskThread"
         private const val DATA_SCHEME_PACKAGE = "package"
         private const val CLOCK_UPDATE_DELAY = 1000L
         private const val WEATHER_FORECAST_UPDATE_DELAY = 60 * 60 * 1000L

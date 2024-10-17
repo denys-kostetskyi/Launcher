@@ -4,18 +4,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.denyskostetskyi.launcher.R
-import com.denyskostetskyi.launcher.databinding.FragmentHomeBinding
+import com.denyskostetskyi.launcher.presentation.view.ClockView
+import com.denyskostetskyi.launcher.presentation.view.SystemInfoView
+import com.denyskostetskyi.launcher.presentation.view.WeatherForecastView
 import com.denyskostetskyi.launcher.presentation.viewmodel.HomeViewModel
 import com.denyskostetskyi.launcher.presentation.viewmodel.SharedViewModel
 
 class HomeFragment : Fragment() {
-    private var _binding: FragmentHomeBinding? = null
-    private val binding get() = _binding ?: throw RuntimeException("FragmentHomeBinding is null")
-
     private val viewModel: HomeViewModel by lazy {
         ViewModelProvider(requireActivity())[SharedViewModel::class.java]
     }
@@ -24,8 +25,7 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        return binding.root
+        return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -39,23 +39,29 @@ class HomeFragment : Fragment() {
     }
 
     private fun observeViewModel() {
+        val clockView = requireView().findViewById<ClockView>(R.id.clockView)
+        val weatherView = requireView().findViewById<WeatherForecastView>(R.id.weatherView)
+        val systemInfoView = requireView().findViewById<SystemInfoView>(R.id.systemInfoView)
         viewModel.clock.observe(viewLifecycleOwner) {
-            binding.clockView.updateState(it)
+            clockView.updateState(it)
         }
         viewModel.weatherForecast.observe(viewLifecycleOwner) {
-            binding.weatherView.updateState(it)
+            weatherView.updateState(it)
         }
         viewModel.systemInfo.observe(viewLifecycleOwner) {
-            binding.systemInfoView.updateState(it)
+            systemInfoView.updateState(it)
         }
     }
 
     private fun initApplicationsButton() {
         val drawable = ContextCompat.getDrawable(requireContext(), R.drawable.ic_applications)
-        with(binding.buttonApplications) {
-            textViewAppName.text = getString(R.string.applications)
-            imageViewAppIcon.setImageDrawable(drawable)
-            imageViewAppIcon.setOnClickListener { launchAppListFragment() }
+        val buttonApplications = requireView().findViewById<View>(R.id.buttonApplications)
+        val textViewAppName = buttonApplications.findViewById<TextView>(R.id.textViewAppName)
+        textViewAppName.text = getString(R.string.applications)
+        val imageViewAppIcon = buttonApplications.findViewById<ImageView>(R.id.imageViewAppIcon)
+        with(imageViewAppIcon) {
+            setImageDrawable(drawable)
+            setOnClickListener { launchAppListFragment() }
         }
     }
 
@@ -71,10 +77,5 @@ class HomeFragment : Fragment() {
             .replace(R.id.container, appListFragment)
             .addToBackStack(null)
             .commit()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

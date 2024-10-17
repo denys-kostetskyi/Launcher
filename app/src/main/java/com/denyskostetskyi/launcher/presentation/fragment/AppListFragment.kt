@@ -8,11 +8,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import com.denyskostetskyi.launcher.R
-import com.denyskostetskyi.launcher.databinding.FragmentAppListBinding
 import com.denyskostetskyi.launcher.domain.model.AppItem
 import com.denyskostetskyi.launcher.presentation.adapter.AdaptiveGridLayoutManager
 import com.denyskostetskyi.launcher.presentation.adapter.AppListAdapter
@@ -20,8 +22,6 @@ import com.denyskostetskyi.launcher.presentation.viewmodel.AppListViewModel
 import com.denyskostetskyi.launcher.presentation.viewmodel.SharedViewModel
 
 class AppListFragment : Fragment() {
-    private var _binding: FragmentAppListBinding? = null
-    private val binding get() = _binding ?: throw RuntimeException("FragmentAppListBinding is null")
     private val viewModel: AppListViewModel by lazy {
         ViewModelProvider(requireActivity())[SharedViewModel::class.java]
     }
@@ -32,8 +32,7 @@ class AppListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentAppListBinding.inflate(inflater, container, false)
-        return binding.root
+        return inflater.inflate(R.layout.fragment_app_list, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -55,29 +54,27 @@ class AppListFragment : Fragment() {
 
     private fun initRecyclerView() {
         val columnWidth = resources.getDimension(R.dimen.app_item_width)
-        with(binding) {
-            recyclerViewAppList.adapter = appListAdapter
-            recyclerViewAppList.layoutManager =
-                AdaptiveGridLayoutManager(requireContext(), columnWidth)
+        val recyclerViewAppList = requireView().findViewById<RecyclerView>(R.id.recyclerViewAppList)
+        with(recyclerViewAppList) {
+            adapter = appListAdapter
+            layoutManager = AdaptiveGridLayoutManager(requireContext(), columnWidth)
         }
     }
 
     private fun initCloseButton() {
         val drawable = ContextCompat.getDrawable(requireContext(), R.drawable.ic_close)
-        with(binding.buttonCloseAppList) {
+        val buttonCloseAppList = requireView().findViewById<View>(R.id.buttonCloseAppList)
+        val textViewAppName = buttonCloseAppList.findViewById<TextView>(R.id.textViewAppName)
             textViewAppName.text = getString(R.string.close)
-            imageViewAppIcon.setImageDrawable(drawable)
-            imageViewAppIcon.setOnClickListener { closeAppListFragment() }
+        val imageViewAppIcon = buttonCloseAppList.findViewById<ImageView>(R.id.imageViewAppIcon)
+        with(imageViewAppIcon) {
+            setImageDrawable(drawable)
+            setOnClickListener { closeAppListFragment() }
         }
     }
 
     private fun closeAppListFragment() {
         parentFragmentManager.popBackStack()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     private fun getAppIcon(appItem: AppItem): Drawable {

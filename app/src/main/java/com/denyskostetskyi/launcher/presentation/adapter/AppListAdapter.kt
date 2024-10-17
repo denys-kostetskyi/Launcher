@@ -4,7 +4,7 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
-import com.denyskostetskyi.launcher.databinding.ItemAppBinding
+import com.denyskostetskyi.launcher.R
 import com.denyskostetskyi.launcher.domain.model.AppItem
 import com.denyskostetskyi.launcher.presentation.state.AppItemState
 
@@ -13,12 +13,8 @@ class AppListAdapter(
     private val onAppClicked: (AppItem) -> Unit
 ) : ListAdapter<AppItem, AppItemViewHolder>(AppItemDiffCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AppItemViewHolder {
-        val binding = ItemAppBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
-        )
-        return AppItemViewHolder(binding)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_app, parent, false)
+        return AppItemViewHolder(view)
     }
 
     //TODO optimize icons load
@@ -26,9 +22,12 @@ class AppListAdapter(
         val item = currentList[position]
         val icon = getAppIcon(item)
         val state = AppItemState(appIcon = icon, appName = item.appName)
-        holder.bind(state)
-        holder.binding.imageViewAppIcon.setOnClickListener {
-            onAppClicked(item)
+        with(holder) {
+            imageViewAppIcon.setImageDrawable(state.appIcon)
+            imageViewAppIcon.setOnClickListener {
+                onAppClicked(item)
+            }
+            textViewAppName.text = state.appName
         }
     }
 }
